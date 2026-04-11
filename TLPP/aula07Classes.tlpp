@@ -1,0 +1,133 @@
+#Include "tlpp-core.th"
+
+
+Namespace utilizaClasses
+
+
+/*/{Protheus.doc} zPessoa
+    (long_description)
+    @author Fernando Rodrigues
+    @since 10/04/2026
+    @version 
+    @example oObejto := zPessoa():new()
+    /*/
+Class zPessoa
+
+    // Protected só pode ser acionada dentro da classe ou por classes que herdam dela
+    // Private só pode ser acionada dentro da classe
+    // Caso não seja informado nada, assumirá "Private"
+    // Então ambas não podem ser acessadas diretamente como por exemplo oObjeto:nIdade
+
+    Public Data     cNome As Character
+    Protected Data  nIdade As Numeric
+    Private Data    dNascimento As Date
+    Data            cSobreNome As Character
+
+    Public      Method New()         constructor
+    Public      Method MostraIdade()
+    Private     Method MostraNome()
+    Protected   Method MostraSobrenome()
+    Static      Method MostraDataHora()
+        
+EndClass
+
+
+/*/{Protheus.doc} New
+    (long_description)
+    @author Fernando Rodrigues
+    @since 10/04/2026
+    @version 
+    @param cNome, cSobreNome, dNascimento, , 
+    @return Self, , 
+    /*/
+Method New(cNome, cSobreNome, dNascimento) Class zPessoa
+    //Atribuição dos valores passados por parâmetro para as variáveis da classe
+    ::cNome         := cNome
+    ::dNascimento   := dNascimento
+    ::cSobreNome    := cSobreNome
+    ::nIdade        := DateDiffYear(Date(), dNascimento)
+Return Self
+
+
+/*/{Protheus.doc} MostraIdade
+    (long_description)
+    @author Fernando Rodrigues
+    @since 10/04/2026
+
+    /*/
+Method MostraIdade() Class zPessoa
+    
+    Local cMsg := ""
+    cMsg := "A <b>pessoa</b> " + ::cNome + " tem " + cValToChar(::nIdade) + " anos de idade."
+    fwAlertInfo(cMsg, "Dados da pessoa")
+    
+Return
+
+
+/*/{Protheus.doc} MostraNome
+    (long_description)
+    @author Fernando
+    @since 10/04/2026
+ 
+    /*/
+Method MostraNome() Class zPessoa
+    Local cMsg := ""
+    cMsg := "O nome da <b>pessoa</b> é: " + ::cNome + " " + ::cSobreNome
+    fwAlertInfo(cMsg, "Nome da pessoa")    
+Return 
+
+
+/*/{Protheus.doc} MostraSobrenome
+    (long_description)
+    @author Fernando
+    @since 10/04/2026
+ 
+    /*/
+Method MostraSobrenome() Class zPessoa
+    Local cMsg := ""
+    cMsg := "O sobrenome da <b>pessoa</b> é: " + ::cSobreNome + " | "
+    fwAlertInfo(cMsg, "Sobrenome da pessoa")    
+Return 
+
+
+/*/{Protheus.doc} MostraDataHora
+    (long_description)
+    @author Fernando
+    @since 10/04/2026
+
+    /*/
+Method MostraDataHora() Class zPessoa
+    Local cMsg := ""
+    cMsg := "Data e hora atual: " + dToc(Date()) + " às " + Time() + " | "
+    fwAlertInfo(cMsg, "Data e Hora")
+    
+Return 
+
+/*/{Protheus.doc} u_aula07Classes
+    (long_description)
+    @type user function
+    @author Fernando Rodrigues
+    @since 10/04/2026
+    @obs Função pode ser executada como utilizaClasses.u_aula07Classes()
+/*/
+
+
+User Function aula07Classes()
+    Local aAreaBackup := fwGetArea() As Array
+    Local oPessoa     := Nil    As Object
+    Local cNome := "Maria"
+    Local cSobreNome := "da Silva"
+    Local dNascimento := sToD("19850331")
+
+    zPessoa():MostraDataHora()
+
+    oPessoa := zPessoa():New(cNome, cSobreNome, dNascimento)
+    oPessoa:MostraIdade()
+    //oPessoa:MostraNome()
+    oPessoa:MostraSobrenome()
+    
+
+    fwRestArea(aAreaBackup)    
+
+Return 
+

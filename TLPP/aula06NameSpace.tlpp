@@ -1,0 +1,26 @@
+#Include "tlpp-core.th"
+
+
+
+Namespace ti.aula
+
+
+/*/{Protheus.doc} aula06NameSapace
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@since 10/04/2026
+@obs Função pode ser executada como ti.aula.u_aula06NameSapace()
+/*/
+User Function aula06NameSapace()
+    Local aAreaBackup := fwGetArea() As Array
+
+
+    fwAlertInfo("Estou executando a função aula06NameSapace() dentro do namespace ti.aula")
+
+
+
+    fwRestArea(aAreaBackup)
+
+    
+Return 
