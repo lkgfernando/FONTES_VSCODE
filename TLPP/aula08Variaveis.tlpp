@@ -1,0 +1,52 @@
+#Include "tlpp-core.th"
+
+
+Namespace aula08.ti
+
+
+#Define CarriageReturnLineFeed Chr(13) + Chr(10)
+
+
+/*/{Protheus.doc} aula08Variaveis
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@since 13/04/2026
+@version 
+(aula08.ti.u_aula08Variaveis())
+@see (links_or_references)
+/*/
+User Function aula08Variaveis()
+    Local aArea                         := fwGetArea()                      As Array
+    Local cFuncionarioNome              := "Fernando Rodrigues"             As Character
+    Local nSalarioPorHora               := 50.99                            As Numeric
+    Local nSalarioPorHoraArredondado    := 33                               As Integer
+    Local nSalarioPorHoraNormal         := 32.99                            As Double
+    Local nSalarioPorExtenso            := Dec_Create(32.99, 21, 20)        As Decimal
+    Local lGostaDeLerLivros             := .T.                              As Logical
+    Local dDataDeNascimento             := sToD("19850331")                 As Date
+    Local oFonteQueSerUsada             := TFont():New("Arial", /**/, -12)  As Object
+    Local jEstruturaEmJson              := JSONObject():New()               As Json
+    Local bExecutarAoClicar             := {|| Alert("Oi")}                 As CodeBlock
+    Local xPodeTerQualquerValor         := "Fernando "                      As Variant
+    Local cMensagemQueSeraExibida       := ""                               As Character
+
+    //Monta a mensagem a ser exibida
+    cMensagemQueSeraExibida += "Tipos de variáveis: " + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "cFuncionarioNome:               [" + ValType(cFuncionarioNome           ) + "]" + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "nSalarioPorHora:                [" + ValType(nSalarioPorHora            ) + "]" + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "nSalarioPorHoraArredondado:     [" + ValType(nSalarioPorHoraArredondado ) + "]" + CarriageReturnLineFeed  
+    cMensagemQueSeraExibida += "nSalarioPorHoraNormal:          [" + ValType(nSalarioPorHoraNormal      ) + "]" + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "nSalarioPorExtenso:             [" + ValType(nSalarioPorExtenso         ) + "]" + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "lGostaDeLerLivros:              [" + ValType(lGostaDeLerLivros          ) + "]" + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "dDataDeNascimento:              [" + ValType(dDataDeNascimento          ) + "]" + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "oFonteQueSerUsada:              [" + ValType(oFonteQueSerUsada          ) + "]" + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "jEstruturaEmJson:               [" + ValType(jEstruturaEmJson           ) + "]" + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "bExecutarAoClicar:              [" + ValType(bExecutarAoClicar          ) + "]" + CarriageReturnLineFeed
+    cMensagemQueSeraExibida += "xPodeTerQualquerValor:          [" + ValType(xPodeTerQualquerValor      ) + "]" + CarriageReturnLineFeed
+    ShowLog(cMensagemQueSeraExibida)
+
+
+    fwRestArea(aArea)
+
+Return 
