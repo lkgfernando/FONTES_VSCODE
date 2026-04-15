@@ -1,0 +1,47 @@
+#Include "tlpp-core.th"
+
+
+Namespace tentativaErro
+
+
+/*/{Protheus.doc} aula09TryCatch
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@since 15/04/2026
+@exemple tentativaErro.u_aula09TryCatch() 
+/*/ 
+User Function aula09TryCatch()
+    Local aArea     := fwGetArea()  As Array
+    Private oError    := Nil        As Object
+
+
+    TRY
+
+
+        If fwAlertYesNo("Deseja gerar um erro?", "Continuar")
+            fForcar()
+        EndIf
+
+
+        fwAlertSuccess("Sucesso na execução do Try", "Teste Try...Catch")
+
+
+    CATCH oError
+
+        fwAlertError("Erro capturado: " + oError:Description, "Teste Try...Catch")
+
+    ENDTRY
+
+
+
+    fwRestArea(aArea)
+Return 
+
+Static Function fForcar()
+    oError := ErrorClass():New()
+    oError:genCode := 19584
+    oError:Description := "Erro forçado para teste do Try...Catch"
+    THROW oError
+Return
+

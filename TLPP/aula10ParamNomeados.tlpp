@@ -1,0 +1,58 @@
+#Include "tlpp-core.th"
+
+Namespace parametrosnomeados
+
+#Define CRLF Chr(13) + Chr(10)
+
+/*/{Protheus.doc} aula10ParamNomeados
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@since 15/04/2026
+@exemple parametrosnomeados.u_aula10ParamNomeados()
+/*/
+User Function aula10ParamNomeados()
+    Local aArea         := fwGetArea()              As Array
+    Local cNome         := "Fernando José"          As Character
+    Local cSobrenome    := "Rodrigues"              As Character
+    Local cSite         := "www.fernando.com.br"    As Character
+
+    // Chamada modo Classico ADVPL
+    fFuncaoDeTeste(cNome, , cSobrenome, , cSite)
+
+    // Chamada modo Parametros Nomeados
+    fFuncaoDeTeste(cUrlDoSite = cSite, cSobrenomeFuncionario = cSobrenome, cNomeFuncionario = cNome)
+
+
+    fwRestArea(aArea)
+Return 
+
+
+/*/{Protheus.doc} fFuncaoTeste
+    *** função criada para exemplificar o uso de parametros nomeados, não tem nenhuma logica implementada, apenas recebe os parametros e retorna vazio.
+    @type  Static Function
+    @author Fernando
+    @since 15/04/2026
+    @param cNomeFuncionario, dDataNasc, cSobreNomeFuncionario, cNumeroWhatsApp, cUrlDoSite, , 
+/*/    
+Static Function fFuncaoDeTeste(cNomeFuncionario, dDataNasc, cSobreNomeFuncionario, cNumeroWhatsApp, cUrlDoSite)
+    Local aArea                   := fwGetArea()     As Array
+    Local cMensagemQueSeraExibida := " "             As Character
+    Default cNomeFuncionario      := " "         
+    Default dDataNasc             := sToD("")
+    Default cSobreNomeFuncionario := " "
+    Default cNumeroWhatsApp       := " "
+    Default cUrlDoSite            := " "
+
+    cMensagemQueSeraExibida := "Informações vindas nos parâmetros: "        + CRLF
+    cMensagemQueSeraExibida += "------- "                                   + CRLF
+    cMensagemQueSeraExibida += "Nome: " + cNomeFuncionario                  + CRLF
+    cMensagemQueSeraExibida += "Data de Nascimento: " + dToS(dDataNasc)     + CRLF
+    cMensagemQueSeraExibida += "Sobrenome: " + cSobreNomeFuncionario        + CRLF
+    cMensagemQueSeraExibida += "WhatsApp: " + cNumeroWhatsApp               + CRLF
+    cMensagemQueSeraExibida += "Site: " + cUrlDoSite                        + CRLF
+
+    ShowLog(cMensagemQueSeraExibida)
+
+    fwRestArea(aArea)
+Return 
