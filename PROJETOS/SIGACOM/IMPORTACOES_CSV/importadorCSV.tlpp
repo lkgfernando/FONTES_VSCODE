@@ -37,7 +37,7 @@ User Function importadorCSV()
     cArquivoOriginal := tFileDialog("CSV files (*.csv)", 'Seleção de Arquivos', , , .F., )
 
     If File(cArquivoOriginal) .And. Upper(SubStr(cArquivoOriginal, RAt('.', cArquivoOriginal) + 1, 3)) =='CSV'
-        Processa({|| custom.com.imp.u_fimporta()}, "Importando.....")
+        Processa({|| U_fimporta() }, "Importando.....")
     Else
         MsgStop("Arquivo não encontrado ou extensão inválida.", "Atenção")
     EndIf
@@ -56,7 +56,6 @@ Return
 /*/
 User Function fimporta()
     Local aArea             := fwGetArea()                                                          As Array
-    Local cArquivoLog       := "zImpCSV_" + dTos(Date()) + "_" + StrTran(Time(), ':', "-") + ".log" As Character
     Local nTotalLinhas      := 0                                                                    As Numeric
     Local cLinhaAtual       := ""                                                                   As Character
     Local nLinhaAtual       := 0                                                                    As Numeric
@@ -70,12 +69,13 @@ User Function fimporta()
     Local cArmProduto       := ""                                                                   As Character
     Local cGrupoProduto     := ""                                                                   As Character
     Local cNcmProduto       := ""                                                                   As Character
-    Local nOperation        := 3                                                                    As Numeric
     Local aFields           := {}                                                                   As Array
-    Local oModel            := fwLoadModel("MATA010")                                               AS Object
-
+    
+    Private oModel          := fwLoadModel("MATA010")                                               AS Object
+    Private aRotina         := fwLoadMenuDef("MATA010")                                             As Array
     Private cDiretorioLog   := GetTempPath() + "x_importacao\"                                      As Character   
     Private cLog            := ""                                                                   As Character
+    Private lMsErroAuto     := .F.                                                                  As Logical
 
     If ! ExistDir(cDiretorioLog)
         MakeDir(cDiretorioLog)
@@ -115,6 +115,8 @@ User Function fimporta()
                     cGrupoProduto     := aLinha[nPosGrupoProduto]
                     cNcmProduto       := aLinha[nPosNcmProduto]
 
+                    aFields := {}
+                    
                     dbSelectArea("SB1")
                     dbSetOrder(1)
                     
@@ -123,39 +125,37 @@ User Function fimporta()
                         aAdd(aFields, {"B1_COD"     , cCodigoProduto    , Nil})
                         aAdd(aFields, {"B1_DESC"    , cDescricaoProduto , Nil})
                         aAdd(aFields, {"B1_TIPO"    , cTipoProduto      , Nil})
-                        aAdd(aFields, {"B1_UM"      , nPosUmProduto      , Nil})
+                        aAdd(aFields, {"B1_UM"      , cUmProduto      , Nil})
                         aAdd(aFields, {"B1_LOCPAD"  , cArmProduto       , Nil})
                         aAdd(aFields, {"B1_GRUPO"   , cGrupoProduto     , Nil})
                         aAdd(aFields, {"B1_POSIPI"  , cNcmProduto       , Nil})
 
 
+                        lMsErroAuto := .F.
+                        fwMVCRotAuto(oModel, "SB1", MODEL_OPERATION_INSERT, {{"SB1MASTER", aFields}})
 
-                        If fwMVCRotAuto(oModel, "SB1", nOperation, {{"SB1MASTER", aFields},,,.T.})
-                            cLog += "Produto cadastrado com sucesso: " + cCodigoProduto + ". " + CRLF
-                        Else
-
-                            aErro := oModel:GetErrorMessage()
-
-                            cLog += "Erro ao incluir o produto " + cCodigoProduto + " | " + CRLF
-                            cLog += "Campo erro: ["  + cValToChar(aErro[4]) + "] " + CRLF
-                            cLog += "Msf Erro ["     + cValToChar(aErro[6]) + "] " + CRLF
-                            cLog += "Solução: ["     + cValToChar(aErro[7]) + "] " + CRLF
-                            cLog += "Valor Atual: [" + cValToChar(aErro[8]) + "] " + CRLF
-
-                        EndIf
                     Else
-                        cLog    += " - Lin " + cValToChar(nLinhaAtual) + ", Código do produto [" + cCodigoProduto + "] Já cadastrodo no Protheus" + CRLF
+
+                        cLog += "Produto já cadastrado [ " + cCodigoProduto + " ] " + CRLF
                     EndIf
+
                 Else
                     cLog    += " - Lin " + cValToChar(nLinhaAtual) + ", linha não processada. " + CRLF
                 EndIf
 
             EndDo
 
-            If ! Empty(cLog)
-                cLog := "Processamento finalizado, abaixo as mensagens de log: " + CRLF + cLog
-                MomoWrite(cDiretorioLog + cArquivoLog + cLog)
-                ShellExecute("OPEN", cArquivoLog, "", cDiretorioLog, 1)
+            If lMsErroAuto
+
+                MostraErro()
+            Else
+                If ! Empty(cLog)
+                    cLog := "Processamento finalizado, abaixo as mensagens de log: " + CRLF + cLog
+                    //conout(cDiretorioLog + cArquivoLog)
+                    ShowLog(cLog)
+                Else
+                    MsgInfo("Importação concluída sem ocorrências.", "Importação")
+                EndIf
             EndIf
 
         Else
