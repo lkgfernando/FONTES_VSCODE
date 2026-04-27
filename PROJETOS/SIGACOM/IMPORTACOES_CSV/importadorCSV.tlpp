@@ -14,7 +14,8 @@ Static nPosTipoProduto   := 3   As Numeric
 Static nPosUmProduto     := 4   As Numeric
 Static nPosArmProduto    := 5   As Numeric
 Static nPosGrupoProduto  := 6   As Numeric
-Static nPosNcmProduto    := 7   As Numeric
+Static nPosPesoProduto   := 7   As Numeric
+Static nPosNcmProduto    := 8   As Numeric
 
 
 /*/{Protheus.doc} importadorCSV
@@ -69,6 +70,7 @@ User Function fimporta()
     Local cArmProduto       := ""                                                                   As Character
     Local cGrupoProduto     := ""                                                                   As Character
     Local cNcmProduto       := ""                                                                   As Character
+    Local nPesoProdutoLiq   := 0                                                                    AS Double
     Local aFields           := {}                                                                   As Array
     
     Private oModel          := fwLoadModel("MATA010")                                               AS Object
@@ -113,6 +115,7 @@ User Function fimporta()
                     cUmProduto        := aLinha[nPosUmProduto]
                     cArmProduto       := aLinha[nPosArmProduto]
                     cGrupoProduto     := aLinha[nPosGrupoProduto]
+                    nPesoProdutoLiq   := aLinha[nPosPesoProduto]
                     cNcmProduto       := aLinha[nPosNcmProduto]
 
                     aFields := {}
@@ -122,13 +125,14 @@ User Function fimporta()
                     
                     If ! dbSeek(xFilial("SB1") + PadR(cCodigoProduto, TamSX3("B1_COD")[1]))
 
-                        aAdd(aFields, {"B1_COD"     , cCodigoProduto    , Nil})
-                        aAdd(aFields, {"B1_DESC"    , cDescricaoProduto , Nil})
-                        aAdd(aFields, {"B1_TIPO"    , cTipoProduto      , Nil})
-                        aAdd(aFields, {"B1_UM"      , cUmProduto      , Nil})
-                        aAdd(aFields, {"B1_LOCPAD"  , cArmProduto       , Nil})
-                        aAdd(aFields, {"B1_GRUPO"   , cGrupoProduto     , Nil})
-                        aAdd(aFields, {"B1_POSIPI"  , cNcmProduto       , Nil})
+                        aAdd(aFields, {"B1_COD"     , cCodigoProduto        , Nil})
+                        aAdd(aFields, {"B1_DESC"    , cDescricaoProduto     , Nil})
+                        aAdd(aFields, {"B1_TIPO"    , cTipoProduto          , Nil})
+                        aAdd(aFields, {"B1_UM"      , cUmProduto            , Nil})
+                        aAdd(aFields, {"B1_LOCPAD"  , cArmProduto           , Nil})
+                        aAdd(aFields, {"B1_GRUPO"   , cGrupoProduto         , Nil})
+                        aAdd(aFields, {"B1_PESO"    , Val(nPesoProdutoLiq)  , Nil})
+                        aAdd(aFields, {"B1_POSIPI"  , cNcmProduto           , Nil})
 
 
                         lMsErroAuto := .F.
@@ -171,5 +175,4 @@ User Function fimporta()
 
     RestArea(aArea)
 
-Return 
-
+Return
