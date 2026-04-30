@@ -1,0 +1,50 @@
+#Include "tlpp-core.th"
+
+
+Namespace exemploRegEx
+
+#Define CRLF chr(13) + chr(10)
+
+
+/*/{Protheus.doc} aula14RegEx
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@example
+    exemploRegEx.u_aula14RegEx()
+    https://tdn.totvs.com/display/tec/Classe+RegEx
+/*/
+User Function aula14RegEx()
+    Local aArea         := fwGetArea()                          As Array
+    Local cExemplo      := "f[a4@][s5\$][t7] +c[a4@][s5\$]h"    As Character
+    Local oObjetoRegEx  := tlpp.regex.Regex():New("")           As Object
+    Local cBusca        := ""                                   As Character
+    Local lResultado    := .F.                                  As Logical
+    Local cMensagem     := ""                                   As Character
+
+    cBusca      := "f@st c@sh"
+    lResultado  := oObjetoRegEx:Matches(cExemplo, cBusca)
+    cMensagem   := "["+ cValToChar(lResultado) +"] " + cBusca + CRLF
+
+    cBusca      := "f@st c@sh"
+    lResultado  := oObjetoRegEx:Matches(cExemplo, cBusca)
+    cMensagem   := cMensagem + "["+ cValToChar(lResultado) +"] " + cBusca + CRLF
+
+    cBusca      := "fa$t c@$h"
+    lResultado  := oObjetoRegEx:Matches(cExemplo, cBusca)
+    cMensagem   := cMensagem + "["+ cValToChar(lResultado) +"] " + cBusca + CRLF
+
+    cBusca      := "FAST CASH"
+    lResultado  := oObjetoRegEx:Matches(cExemplo, cBusca) 
+    cMensagem   := cMensagem + "["+ cValToChar(lResultado) +"] " + cBusca + CRLF
+
+    cBusca      := "Fast Teste Fernando"
+    lResultado  := oObjetoRegEx:Matches(cExemplo, cBusca)
+    cMensagem   := cMensagem + "["+ cValToChar(lResultado) +"] " + cBusca + CRLF
+
+    ShowLog(cMensagem)
+
+    fwRestArea(aArea)
+
+
+Return 

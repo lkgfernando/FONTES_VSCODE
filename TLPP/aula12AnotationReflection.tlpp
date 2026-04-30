@@ -1,0 +1,54 @@
+#Include "tlpp-core.th"
+
+
+Namespace usoAnotacoes
+
+@annotation exemploAnnotation
+    cNome       As Character Default ""
+@end
+
+
+/*/{Protheus.doc} aula12anotationReflection
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@since 18/04/2026
+@example
+    usoAnotacoes.u_aula12anotationReflection()
+/*/
+User Function aula12anotationReflection(@exemploAnnotation("Informe o Nome do Funcionario") cNome)
+    Local aArea     := fwGetArea()          As Array
+    Local cMensagem := ""                   As Character
+
+
+    cMensagem := FormatStr("Nome: %c", {cNome})
+    fwAlertInfo(cMensagem, "Titulo teste")
+
+    fwRestArea(aArea)
+
+Return
+
+
+/*/{Protheus.doc} zExemploLinguagem
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@since 18/04/2026
+@example
+    usoAnotacoes.u_zExemploLinguagem()
+/*/
+User Function zExemploLinguagem()
+    Local aArea    := fwGetArea()          As Array
+    Local jJsonResult                      As Json
+
+
+    jJsonResult := Reflection.getFunctionParamAnnotation("aula12AnotationReflection.tlpp", "u_aula12anotationReflection", 1,  "exemploAnnotation")
+
+    ShowLog(jJsonResult:toJson())
+
+
+    fwRestArea(aArea)
+Return 
+
+
+

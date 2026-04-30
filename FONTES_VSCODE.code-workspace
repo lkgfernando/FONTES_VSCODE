@@ -6,6 +6,6 @@
 	],
 	"settings": {
 		"totvsLanguageServer.welcomePage": false,
-		"totvsLanguageServer.editor.linter.includes": "Z:\\include"
+		"totvsLanguageServer.editor.linter.includes": "D:\\FONTES_GIT\\PROJETO_TLPP_FINANCEIRO\\includes"
 	}
 }

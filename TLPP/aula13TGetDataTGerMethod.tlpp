@@ -1,0 +1,39 @@
+#Include "tlpp-core.th"
+
+
+Namespace exemploDeBuscaDeClasses
+
+#Define CRLF Chr(13) + Chr(10)
+
+/*/{Protheus.doc} aula13TGetDataTGetMethod
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@since 18/04/2026
+@version 
+@param , , 
+@return , , 
+@example
+    exemploDeBuscaDeClasses.u_aula13TGetDataTGetMethod()
+/*/
+User Function aula13TGetDataTGetMethod()
+    Local aArea                     := fwGetArea()                              As Array
+    Local aListaMetodos             := utilizaClasses.zPessoa():TGetMethods()   As Array
+    Local aListaAtributos           := utilizaClasses.zPessoa():TGetData()      As Array
+    Local cMensagemQueSeraExibida   := ""                                       As Character
+
+    cMensagemQueSeraExibida := "Classe zPessoa  na Namespace utilizaClasses" + CRLF
+
+    cMensagemQueSeraExibida += CRLF
+    cMensagemQueSeraExibida += "Lista de métodos:" + CRLF
+    aEval(aListaMetodos, {|x| cMensagemQueSeraExibida += x + CRLF})
+
+    cMensagemQueSeraExibida += CRLF
+    cMensagemQueSeraExibida += "Lista de atributos:" + CRLF
+    aEval(aListaAtributos, {|x| cMensagemQueSeraExibida += x + CRLF})
+
+    ShowLog(cMensagemQueSeraExibida)
+
+    fwRestArea(aArea)
+
+Return 

@@ -1,0 +1,31 @@
+#Include "tlpp-core.th"
+
+
+Namespace objetoJson
+
+
+/*/{Protheus.doc} aula11Json
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@since 18/04/2026
+@example
+    objetoJson.u_aula11Json()
+@see (links_or_references)
+/*/
+User Function aula11Json()
+    Local aArea         := fwGetArea()      As Array
+    Local jJsonDeTeste                      As Json
+
+    jJsonDeTeste := {"nome": "Fernando", "sobrenome": "Rodrigues", "idade": 30, "hobbies": ["programar", "viajar", "cozinhar"]}
+
+    jJsonDeTeste["altura"]     := 1.75 
+    jJsonDeTeste["gostaDeLer"] := .T.
+    jJsonDeTeste["sites"]      := {}
+    aAdd(jJsonDeTeste["sites"], "https://www.totvs.com")
+    aAdd(jJsonDeTeste["sites"], "https://www.klSolutions.ti")
+
+    ShowLog(jJsonDeTeste:ToJson())
+
+    fwRestArea(aArea)
+Return 
