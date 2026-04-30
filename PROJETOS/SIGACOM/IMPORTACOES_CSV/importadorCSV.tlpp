@@ -1,0 +1,178 @@
+#Include "tlpp-core.th"
+#Include "Totvs.ch"
+#Include "TopConn.ch"
+#Include "FWMVCdef.ch"
+
+
+Namespace custom.com.imp
+
+#Define CRLF chr(13) + chr(10)
+
+Static nPosCodigoProduto := 1   As Numeric
+Static nPosDescriProduto := 2   As Numeric
+Static nPosTipoProduto   := 3   As Numeric
+Static nPosUmProduto     := 4   As Numeric
+Static nPosArmProduto    := 5   As Numeric
+Static nPosGrupoProduto  := 6   As Numeric
+Static nPosPesoProduto   := 7   As Numeric
+Static nPosNcmProduto    := 8   As Numeric
+
+
+/*/{Protheus.doc} importadorCSV
+(long_description)
+@type user function
+@author Fernando Rodrigues
+@since 24/04/2026
+@version 
+@param , , 
+@return , , 
+@example
+ No mini formula utilizar custom.com.imp.u_importadorCSV()
+ No menu protheus custom.com.imp.importadorCSV
+@see (links_or_references)
+/*/
+User Function importadorCSV()
+    Local aArea                 := fwGetArea()      As Array
+    Private cArquivoOriginal    := ""               As Character
+
+    cArquivoOriginal := tFileDialog("CSV files (*.csv)", 'Seleção de Arquivos', , , .F., )
+
+    If File(cArquivoOriginal) .And. Upper(SubStr(cArquivoOriginal, RAt('.', cArquivoOriginal) + 1, 3)) =='CSV'
+        Processa({|| U_fimporta() }, "Importando.....")
+    Else
+        MsgStop("Arquivo não encontrado ou extensão inválida.", "Atenção")
+    EndIf
+
+
+    RestArea(aArea)
+
+Return
+
+
+/*/{Protheus.doc} fimporta
+(long_description)
+@type user function
+@author Fernando Rodrigues
+
+/*/
+User Function fimporta()
+    Local aArea             := fwGetArea()                                                          As Array
+    Local nTotalLinhas      := 0                                                                    As Numeric
+    Local cLinhaAtual       := ""                                                                   As Character
+    Local nLinhaAtual       := 0                                                                    As Numeric
+    Local aLinha            := {}                                                                   As Array
+    Local oArquivo                                                                                  As Object
+    Local aLinhas                                                                                   As Array
+    Local cCodigoProduto    := ""                                                                   As Character
+    Local cDescricaoProduto := ""                                                                   As Character
+    Local cTipoProduto      := ""                                                                   As Character
+    Local cUmProduto        := ""                                                                   As Character   
+    Local cArmProduto       := ""                                                                   As Character
+    Local cGrupoProduto     := ""                                                                   As Character
+    Local cNcmProduto       := ""                                                                   As Character
+    Local nPesoProdutoLiq   := 0                                                                    AS Double
+    Local aFields           := {}                                                                   As Array
+    
+    Private oModel          := fwLoadModel("MATA010")                                               AS Object
+    Private aRotina         := fwLoadMenuDef("MATA010")                                             As Array
+    Private cDiretorioLog   := GetTempPath() + "x_importacao\"                                      As Character   
+    Private cLog            := ""                                                                   As Character
+    Private lMsErroAuto     := .F.                                                                  As Logical
+
+    If ! ExistDir(cDiretorioLog)
+        MakeDir(cDiretorioLog)
+    EndIf
+
+    oArquivo := fwFileReader():New(cArquivoOriginal)
+
+    If (oArquivo:Open())
+
+        If ! (oArquivo:Eof())
+
+            aLinhas      := oArquivo:GetAllLines()
+            nTotalLinhas := Len(aLinhas)
+            ProcRegua(nTotalLinhas)
+
+            oArquivo:Close()
+            oArquivo := fwFileReader():New(cArquivoOriginal) 
+            oArquivo:Open()
+
+
+            While (oArquivo:HasLine())
+
+                nLinhaAtual++
+                IncProc("Analisando linha " + cValToChar(nLinhaAtual) + " de " + cValToChar(nTotalLinhas) + "...")
+
+                cLinhaAtual := oArquivo:GetLine()
+                aLinha      := StrTokArr(cLinhaAtual, ";")
+
+
+
+                If ! "código" $ Lower(cLinhaAtual)
+                    cCodigoProduto    := aLinha[nPosCodigoProduto]
+                    cDescricaoProduto := aLinha[nPosDescriProduto]
+                    cTipoProduto      := aLinha[nPosTipoProduto]
+                    cUmProduto        := aLinha[nPosUmProduto]
+                    cArmProduto       := aLinha[nPosArmProduto]
+                    cGrupoProduto     := aLinha[nPosGrupoProduto]
+                    nPesoProdutoLiq   := aLinha[nPosPesoProduto]
+                    cNcmProduto       := aLinha[nPosNcmProduto]
+
+                    aFields := {}
+                    
+                    dbSelectArea("SB1")
+                    dbSetOrder(1)
+                    
+                    If ! dbSeek(xFilial("SB1") + PadR(cCodigoProduto, TamSX3("B1_COD")[1]))
+
+                        aAdd(aFields, {"B1_COD"     , cCodigoProduto        , Nil})
+                        aAdd(aFields, {"B1_DESC"    , cDescricaoProduto     , Nil})
+                        aAdd(aFields, {"B1_TIPO"    , cTipoProduto          , Nil})
+                        aAdd(aFields, {"B1_UM"      , cUmProduto            , Nil})
+                        aAdd(aFields, {"B1_LOCPAD"  , cArmProduto           , Nil})
+                        aAdd(aFields, {"B1_GRUPO"   , cGrupoProduto         , Nil})
+                        aAdd(aFields, {"B1_PESO"    , Val(nPesoProdutoLiq)  , Nil})
+                        aAdd(aFields, {"B1_POSIPI"  , cNcmProduto           , Nil})
+
+
+                        lMsErroAuto := .F.
+                        fwMVCRotAuto(oModel, "SB1", MODEL_OPERATION_INSERT, {{"SB1MASTER", aFields}})
+
+                    Else
+
+                        cLog += "Produto já cadastrado [ " + cCodigoProduto + " ] " + CRLF
+                    EndIf
+
+                Else
+                    cLog    += " - Lin " + cValToChar(nLinhaAtual) + ", linha não processada. " + CRLF
+                EndIf
+
+            EndDo
+
+            If lMsErroAuto
+
+                MostraErro()
+            Else
+                If ! Empty(cLog)
+                    cLog := "Processamento finalizado, abaixo as mensagens de log: " + CRLF + cLog
+                    //conout(cDiretorioLog + cArquivoLog)
+                    ShowLog(cLog)
+                Else
+                    MsgInfo("Importação concluída sem ocorrências.", "Importação")
+                EndIf
+            EndIf
+
+        Else
+            MsgStop("Arquivo não tem conteúdo", "Atenção")
+        EndIf
+
+    Else
+
+        MsgStop("Arquivo não pode ser aberto!", "Atenção")
+
+    EndIf
+
+
+    RestArea(aArea)
+
+Return

@@ -6,6 +6,11 @@
 	],
 	"settings": {
 		"totvsLanguageServer.welcomePage": false,
+<<<<<<< HEAD
 		"totvsLanguageServer.editor.linter.includes": "D:\\FONTES_GIT\\PROJETO_TLPP_FINANCEIRO\\includes"
+=======
+		"totvsLanguageServer.editor.linter.includes": "Z:\\include;C:\\Totvs\\Protheus_1225\\AppServer\\Protheus\\include",
+		"advpl.debug_multiThread": true
+>>>>>>> fe7b02590b1a360d0ca9c6898e3a849157691938
 	}
 }
